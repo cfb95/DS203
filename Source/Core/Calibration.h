@@ -115,10 +115,11 @@
 		};
 #if 1
 		// potrebujem vediet rozlisenie a vertikalnu polohu
+		// I need to know the resolution and the vertical position (google translator)
 		void Prepare(AnalogChannel* pSource, FastCalc& fast)
 		{
-			const static float arrMultipliers[AnalogChannel::_ResolutionMax+1] = 
-				{50e-3f, 100e-3f, 200e-3f, 500e-3f, 1.0f, 2.0f, 5.0f, 10.0f};
+			//const static float arrMultipliers[AnalogChannel::_ResolutionMax+1] = 
+			//	{50e-3f, 100e-3f, 200e-3f, 500e-3f, 1.0f, 2.0f, 5.0f, 10.0f};
 
 			LinCalibCurve& pCurCurve = CalData[ pSource->Resolution ];
 			si16& nVert = pSource->u16Position;
@@ -126,10 +127,10 @@
 			fast.K = InterpolatorK::Get( pCurCurve.m_arrCurveKin, pCurCurve.m_arrCurveKout, nVert );
 			fast.Q = InterpolatorQ::Get( pCurCurve.m_arrCurveQin, pCurCurve.m_arrCurveQout, nVert );
 			fast.Zero = fast.Q / fast.K;
-			fast.fMultiplier = arrMultipliers[pSource->Resolution];
+			fast.fMultiplier = GetMultiplier(pSource->Resolution) * pSource->pfValueProbe[pSource->Probe];//arrMultipliers[pSource->Resolution];
 		}
 
-		float GetMultiplier(int nRes)
+		static float GetMultiplier(int nRes)
 		{
 			const static float arrMultipliers[AnalogChannel::_ResolutionMax+1] = 
 				{50e-3f, 100e-3f, 200e-3f, 500e-3f, 1.0f, 2.0f, 5.0f, 10.0f};
@@ -138,14 +139,15 @@
 
 		static void Prepare(int nRes, int nVert, LinCalibCurve& pCurCurve, FastCalc& fast)
 		{
-			const static float arrMultipliers[AnalogChannel::_ResolutionMax+1] = 
-				{50e-3f, 100e-3f, 200e-3f, 500e-3f, 1.0f, 2.0f, 5.0f, 10.0f};
+			//const static float arrMultipliers[AnalogChannel::_ResolutionMax+1] = 
+			//	{50e-3f, 100e-3f, 200e-3f, 500e-3f, 1.0f, 2.0f, 5.0f, 10.0f};
 
 			fast.K = InterpolatorK::Get( pCurCurve.m_arrCurveKin, pCurCurve.m_arrCurveKout, nVert );
 			fast.Q = InterpolatorQ::Get( pCurCurve.m_arrCurveQin, pCurCurve.m_arrCurveQout, nVert );
 			fast.Zero = fast.Q / fast.K;
-			fast.fMultiplier = arrMultipliers[nRes];
+			fast.fMultiplier = GetMultiplier(nRes);//arrMultipliers[nRes];
 		}
+
 
 		int Correct( FastCalc& fast, int nAdc )
 		{
